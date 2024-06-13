@@ -27,6 +27,7 @@ program
 	.option("-p, --production", "Production build")
 	.option("-v, --vault", "Use vault path")
 	.option("-o, --output-dir <path>", "Output path")
+	.option("-b, --beta", "Pre-release version")
 	.parse();
 program.parse();
 
@@ -47,6 +48,9 @@ const folderPlugin = vaultPath
 
 if (vaultPath && exportToVault && !fs.existsSync(folderPlugin)) {
 	fs.mkdirSync(folderPlugin, { recursive: true });
+}
+if (opt.beta && !fs.existsSync("manifest-beta.json")) {
+	fs.copyFileSync("manifest.json", "manifest-beta.json");
 }
 
 let outdir = "./";
@@ -87,7 +91,9 @@ const exportToVaultFunc = {
 			fs.copyFileSync(`${outdir}/main.js`, path.join(folderPlugin, "main.js"));
 			if (fs.existsSync(`${outdir}/styles.css`))
 				fs.copyFileSync("./styles.css", path.join(folderPlugin, "styles.css"));
-			fs.copyFileSync("./manifest.json", path.join(folderPlugin, "manifest.json"));
+			if (opt.beta)
+				fs.copyFileSync("manifest-beta.json", path.join(folderPlugin, "manifest.json"));
+			else fs.copyFileSync("./manifest.json", path.join(folderPlugin, "manifest.json"));
 		});
 	},
 };
@@ -99,7 +105,9 @@ const exportToDist = {
 	name: "export-to-dist",
 	setup(build) {
 		build.onEnd(() => {
-			fs.copyFileSync("manifest.json", path.join(outdir, "manifest.json"));
+			if (opt.beta)
+				fs.copyFileSync("manifest-beta.json", path.join(outdir, "manifest.json"));
+			else fs.copyFileSync("manifest.json", path.join(outdir, "manifest.json"));
 		});
 	},
 };
