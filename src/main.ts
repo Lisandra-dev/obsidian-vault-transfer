@@ -4,6 +4,7 @@ import { DEFAULT_SETTINGS, SettingTab, type VaultTransferSettings } from "settin
 
 export default class VaultTransferPlugin extends Plugin {
 	settings: VaultTransferSettings;
+	statusBarItem: HTMLElement | null = null;
 
 	async onload() {
 		console.log('loading vault-transfer plugin');

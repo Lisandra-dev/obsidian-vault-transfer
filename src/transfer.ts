@@ -1,7 +1,8 @@
 import * as fs from "fs";
-import { type App, type Editor, FileSystemAdapter, type MarkdownView, moment, normalizePath, TFile, type TFolder } from "obsidian";
+import { type App, type Editor, FileSystemAdapter, type MarkdownView, moment, normalizePath, Notice, TFile, type TFolder } from "obsidian";
 import type { VaultTransferSettings } from "settings";
-import { showNotice } from "utils";
+import { showNotice, TransferStatusBar } from "utils";
+import type VaultTransferPlugin from "./main";
 
 /**
  * Simple function that remove a part of a path using the settings "removePath"
@@ -44,7 +45,8 @@ export function overrideOutputPath(path: string, settings: VaultTransferSettings
 /**
  * Copies the content of the current note to another vault, then replaces existing note contents with a link to the new file.
  */
-export async function transferNote(editor: Editor | null, file: TFile | null, app: App, settings: VaultTransferSettings, recursive?: boolean, outputPath?: string, dataMetadata?: string | number) {
+export async function transferNote(editor: Editor | null, file: TFile | null, plugin: VaultTransferPlugin, recursive?: boolean, outputPath?: string, dataMetadata?: string | number) {
+    const { app, settings } = plugin;
     try {
         // Check settings
         const settingsErrorShown = showErrorIfSettingsInvalid(settings);
@@ -106,7 +108,7 @@ export async function transferNote(editor: Editor | null, file: TFile | null, ap
         }
 
         //get list of all attachments
-        copyAllAttachments(file, app, outputPath, thisVaultPath);
+        copyAllAttachments(file, plugin, outputPath, thisVaultPath);
         // Copy to new file in other vault
         fs.copyFileSync(normalizePath(`${thisVaultPath}/${file.path}`), outputPath);
 
@@ -130,7 +132,7 @@ export async function transferNote(editor: Editor | null, file: TFile | null, ap
  * @param file {TFolder} The folder to get files from
  * @returns {TFile[]} A list of all TFiles files in the folder
  */
-function listToTransfer(folder: TFolder, app: App) {
+function listToTransfer(folder: TFolder, app: App): TFile[] {
     const files = folder.children;
     const filesToTransfer: TFile[] = [];
     //recursive function to get all files in folder
@@ -183,7 +185,8 @@ export function getMetadataDate(file: TFile | undefined | null, app: App, settin
  * @param app {App} Obsidian app
  * @param settings {VaultTransferSettings} Plugin settings
  */
-export function transferFolder(folder: TFolder, app: App, settings: VaultTransferSettings, outputPath?: string) {
+export function transferFolder(folder: TFolder, plugin: VaultTransferPlugin, outputPath?: string) {
+    const { app, settings } = plugin;
     const files = listToTransfer(folder, app);
     let folderNote = getFolderNote(folder, app) ?? null;
     if (!folderNote) {
@@ -200,14 +203,21 @@ export function transferFolder(folder: TFolder, app: App, settings: VaultTransfe
         }
     }
     const metadataDate = getMetadataDate(folderNote, app, settings);
+    const noticeMessage: string[] = [];
+    const statusBarItem = plugin.addStatusBarItem();
+    const statusBar = new TransferStatusBar(statusBarItem, files.length);
     for (const file of files) {
-        transferNote(null, file, app, settings, true, outputPath, metadataDate);
+        transferNote(null, file, plugin, true, outputPath, metadataDate);
         //delete folder after all files are transferred
         if (settings.deleteOriginal && !settings.createLink) {
             app.vault.trash(folder, settings.moveToSystemTrash);
         }
-        showNotice(`Finished copying ${file.path}`);
+        statusBar.increment();
+        noticeMessage.push(file.path);
     }
+    new Notice(`Transfer completed. ${noticeMessage.length} files copied into ${outputPath ?? settings.outputFolder}. See logs for details!`);
+    console.log(noticeMessage);
+    statusBar.finish();
 }
 
 /**
@@ -272,9 +282,14 @@ function showErrorIfSettingsInvalid(settings: VaultTransferSettings): boolean {
  * @param newVault {string} The path of the new vault, where the attachments should be copied to. 
  * @param thisVaultPath {string} The path of the current vault, where the attachments are located.
  */
-function copyAllAttachments(file: TFile, app: App, newVault: string, thisVaultPath: string) {
+function copyAllAttachments(file: TFile, plugin: VaultTransferPlugin, newVault: string, thisVaultPath: string) {
+    const { app } = plugin;
+
     //Get all attachments of the file, aka embedded things (pdf, image...)
     const attachments = app.metadataCache.getFileCache(file)?.embeds ?? [];
+    if (attachments.length === 0) return;
+    const statusBarItem = plugin.addStatusBarItem();
+    const statusBar = new TransferStatusBar(statusBarItem, attachments.length, true);
     for (const attachment of attachments) {
         //copy the attachment to the new vault
         const attachmentPath = app.metadataCache.getFirstLinkpathDest(attachment.link.replace(/#.*/, ""), file.path);
@@ -289,6 +304,8 @@ function copyAllAttachments(file: TFile, app: App, newVault: string, thisVaultPa
             }
             //copy the attachment
             fs.copyFileSync(oldAttachmentPath, newAttachmentPath);
+            statusBar.increment();
         }
     }
+    statusBar.finish();
 }

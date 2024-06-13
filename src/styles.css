@@ -1,0 +1,40 @@
+@keyframes hourglassRotation {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	50% {
+		transform: rotate(180deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+span.vault-transfer-icon.loading svg {
+	/* animate */
+	animation: spin 1s linear infinite;
+	vertical-align: middle;
+}
+
+span.vault-transfer-icon svg {
+	margin-right: 2px;
+}
+
+.status-bar-item.plugin-vault-transfer.finished {
+	color: var(--text-success);
+}
+
+.status-bar-item.plugin-vault-transfer.error {
+	color: var(--text-error);
+}
+
+span.vault-transfer-icon svg.lucide-hourglass {
+	/* animation to bump to up */
+	animation: hourglassRotation 1s linear infinite;
+}
+
+.status-bar-item.plugin-vault-transfer svg.lucide-loader {
+	animation: hourglassRotation 1s linear infinite;
+}

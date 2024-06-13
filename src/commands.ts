@@ -25,7 +25,7 @@ export function addCommands(plugin: VaultTransferPlugin) {
         return;
       }
       const metadataDate = getMetadataDate(view.file, plugin.app, plugin.settings);
-      transferNote(editor, view.file, plugin.app, plugin.settings, undefined, undefined, metadataDate);
+      transferNote(editor, view.file, plugin, undefined, undefined, metadataDate);
     }
   });
 
@@ -61,10 +61,10 @@ export function addMenuCommands(plugin: VaultTransferPlugin) {
             .setIcon("arrow-right-circle")
             .onClick(async () => {
               if (file instanceof TFolder) {
-                transferFolder(file, plugin.app, plugin.settings)
+                transferFolder(file, plugin)
               } else if (file instanceof TFile) {
                 const metadataDate = getMetadataDate(file, plugin.app, plugin.settings);
-                transferNote(null, file, plugin.app, plugin.settings, undefined, undefined, metadataDate);
+                transferNote(null, file, plugin, undefined, undefined, metadataDate);
               }
             });
           submenu.addItem((subitem) => {
