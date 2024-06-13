@@ -1,3 +1,8 @@
+## [1.3.0-2](https://github.com/Mara-Li/obsidian-vault-transfer/compare/1.3.0-1...1.3.0-2) (2024-06-13)
+### Bug Fixes
+
+* multiple message when a big folder is transfered ([2408f5a](https://github.com/Mara-Li/obsidian-vault-transfer/commit/2408f5a875f1eb0409583049d3fefd2cfafcb8cd))
+
 ## [1.3.0-1](https://github.com/Mara-Li/obsidian-vault-transfer/compare/1.3.0-0...1.3.0-1) (2024-06-13)
 
 ## [1.3.0-0](https://github.com/Mara-Li/obsidian-vault-transfer/compare/1.2.3...1.3.0-0) (2024-06-13)
