@@ -21,7 +21,7 @@ export class TransferStatusBar {
 		this.icon = this.statusBarItem.createSpan({cls: ["vault-transfer-icon"]});
 		setIcon(this.icon, "search-check");
 		this.status = this.isAttachment ? this.statusBarItem.createSpan({text: `Number of attachments found to transfer: ${this.total}`}) : this.statusBarItem.createSpan({text: `Number of files to transfer: ${this.total}`});
-		this.statusBarItem.addClass("starting");
+		this.statusBarItem.addClass("loading");
 	}
 
 	increment() {
