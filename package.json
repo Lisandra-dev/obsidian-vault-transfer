@@ -10,10 +10,11 @@
 		"dev": "node esbuild.config.mjs",
 		"export": "node esbuild.config.mjs --production --vault",
 		"bump": "node commit-and-tag-version.mjs",
-		"postbump": "git push --follow-tags origin master",
-		"predeploy": "pnpm run bump",
-		"deploy": "pnpm run export",
-		"lint": "pnpm biome lint --write src/"
+		"postbump": "dotenv -- if-env SKIP_POST_BUMP=true && echo 'skip post-bump' || git push --follow-tags origin master",
+		"predeploy": "bun run bump",
+		"deploy": "bun run export",
+		"lint": "bun biome lint --write src/",
+		"test": "dotenv -- if-env SKIP_TEST=true && echo 'skip test' || echo 'run test'"
 	},
 	"engines": {
 		"node": "^22.2.0"
@@ -31,14 +32,17 @@
 		"typescript": "5.4.5"
 	},
 	"dependencies": {
+		"@delucis/if-env": "^1.1.2",
 		"ansi-colors": "^4.1.3",
 		"commander": "^12.1.0",
 		"commit-and-tag-version": "^12.4.1",
 		"dedent": "^1.5.3",
-		"dotenv": "^16.4.5"
+		"dotenv": "^16.4.5",
+		"dotenv-cli": "^7.4.2"
 	},
 	"trustedDependencies": [
 		"@biomejs/biome",
+		"core-js",
 		"esbuild"
 	]
 }
