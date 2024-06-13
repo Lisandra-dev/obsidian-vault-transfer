@@ -9,12 +9,13 @@
 		"dev:prod": "node esbuild.config.mjs --vault",
 		"dev": "node esbuild.config.mjs",
 		"export": "node esbuild.config.mjs --production --vault",
-		"bump": "node commit-and-tag-version.mjs",
-		"postbump": "dotenv -- if-env SKIP_POST_BUMP=true && echo 'skip post-bump' || git push --follow-tags origin master",
+		"bump": "dotenv -- node commit-and-tag-version.mjs",
+		"postbump": "dotenv -- if-env SKIP_POST_BUMP=true && echo 'skip post-bump' || git push --follow-tags origin dev",
 		"predeploy": "bun run bump",
 		"deploy": "bun run export",
 		"lint": "bun biome lint --write src/",
-		"test": "dotenv -- if-env SKIP_TEST=true && echo 'skip test' || echo 'run test'"
+		"test": "echo test",
+		"posttest": "dotenv -- if-env SKIP_POST_TEST=true && echo 'skip post-test' || echo 'post-test'"
 	},
 	"engines": {
 		"node": "^22.2.0"
