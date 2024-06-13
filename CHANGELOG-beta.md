@@ -1,3 +1,5 @@
+## [1.3.0-1](https://github.com/Mara-Li/obsidian-vault-transfer/compare/1.3.0-0...1.3.0-1) (2024-06-13)
+
 ## [1.3.0-0](https://github.com/Mara-Li/obsidian-vault-transfer/compare/1.2.3...1.3.0-0) (2024-06-13)
 ### Features
 
