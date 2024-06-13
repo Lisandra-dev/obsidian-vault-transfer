@@ -1,6 +1,6 @@
 import * as fs from "fs";
-import { App, Editor, FileSystemAdapter, MarkdownView, moment, normalizePath, TFile, TFolder } from "obsidian";
-import { VaultTransferSettings } from "settings";
+import { type App, type Editor, FileSystemAdapter, type MarkdownView, moment, normalizePath, TFile, type TFolder } from "obsidian";
+import type { VaultTransferSettings } from "settings";
 import { showNotice } from "utils";
 
 /**
@@ -18,8 +18,8 @@ function removePartOfPath(settings: VaultTransferSettings, path: string): string
 
 function replaceWithDate(path: string, date?: number | string) {
     if (!date) date = new Date().toISOString();
-    const DATE_REGEX = /\{\{(.*?)\}\}/gi;
-    return path.replace(DATE_REGEX, (match: string, group: string) => {
+    const dateRegex = /\{\{(.*?)\}\}/gi;
+    return path.replace(dateRegex, (_match: string, group: string) => {
         return moment(date).format(group);
     });
 }
@@ -164,15 +164,15 @@ export function getMetadataDate(file: TFile | undefined | null, app: App, settin
         metadataDate = app.metadataCache.getFileCache(file)?.frontmatter?.[settings.dateVariable.frontmatterKey];
         if (!metadataDate) {
             if (settings.dateVariable.fallback === "creation") {
-                return metadataDate = file.stat.ctime;
+                return file.stat.ctime;
             } else if (settings.dateVariable.fallback === "modification") {
-                return metadataDate = file.stat.mtime;
+                return file.stat.mtime;
             }
         }
     } else if (settings.dateVariable.type === "creation") {
-        return metadataDate = file.stat.ctime;
+        return file.stat.ctime;
     } else if (settings.dateVariable.type === "modification") {
-        return metadataDate = file.stat.mtime;
+        return file.stat.mtime;
     }
     return metadataDate;
 }

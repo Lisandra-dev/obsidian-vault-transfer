@@ -1,5 +1,5 @@
-import { Editor, MarkdownView, Menu, TFile, TFolder } from 'obsidian';
-import VaultTransferPlugin from 'main';
+import { type Editor, type MarkdownView, type Menu, TFile, TFolder } from 'obsidian';
+import type VaultTransferPlugin from 'main';
 import { getMetadataDate, insertLinkToOtherVault, transferFolder, transferNote } from 'transfer';
 import { FolderSuggestModal } from 'modals';
 import * as fs from 'fs';
@@ -74,11 +74,11 @@ export function addMenuCommands(plugin: VaultTransferPlugin) {
               .onClick(async () => {
                 //get all folder in the output vault
                 const folders: Folder[] = fs.readdirSync(plugin.settings.outputVault)
-                  .filter((file) => fs.statSync(plugin.settings.outputVault + "/" + file).isDirectory())
+                  .filter((file) => fs.statSync(`${plugin.settings.outputVault}/${file}`).isDirectory())
                   .filter((folder) => folder != plugin.app.vault.configDir)
                   .map((folder) => {
                     return {
-                      absPath: plugin.settings.outputVault + "/" + folder,
+                      absPath: `${plugin.settings.outputVault}/${folder}`,
                       relPath: folder
                     }
                   });

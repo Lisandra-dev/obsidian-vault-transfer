@@ -1,9 +1,9 @@
-import { Folder } from "commands";
+import type { Folder } from "commands";
 import * as fs from "fs";
-import VaultTransferPlugin from "main";
-import { App, FuzzySuggestModal, Modal, normalizePath, Setting, TAbstractFile, TFile, TFolder } from "obsidian";
-import { VaultTransferSettings } from "settings";
-import { getMetadataDate, transferFolder, transferNote } from "transfer";
+import type VaultTransferPlugin from "main";
+import { type App, FuzzySuggestModal, Modal, normalizePath, Setting, type TAbstractFile, TFile, TFolder } from "obsidian";
+import type { VaultTransferSettings } from "settings";
+import { transferFolder, transferNote } from "transfer";
 
 /** Fuzzy modal where you can search a specific folder with the Path */
 
@@ -32,7 +32,7 @@ export class FolderSuggestModal extends FuzzySuggestModal<Folder> {
 		return item.relPath;
 	}
 
-    onChooseItem(item: Folder, evt: MouseEvent | KeyboardEvent): void {
+    onChooseItem(item: Folder, _evt: MouseEvent | KeyboardEvent): void {
         if (item.absPath.length == 0) {
             new CreateFolder(this.app, this.plugin, this.settings, item, this.toTransfer).open();
         } else if (this.toTransfer instanceof TFolder) {

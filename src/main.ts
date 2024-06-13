@@ -1,6 +1,6 @@
 import { addCommands, addMenuCommands } from "commands";
 import { Plugin } from "obsidian";
-import { DEFAULT_SETTINGS, SettingTab, VaultTransferSettings } from "settings";
+import { DEFAULT_SETTINGS, SettingTab, type VaultTransferSettings } from "settings";
 
 export default class VaultTransferPlugin extends Plugin {
 	settings: VaultTransferSettings;

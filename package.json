@@ -13,7 +13,7 @@
 		"postbump": "git push --follow-tags origin master",
 		"predeploy": "pnpm run bump",
 		"deploy": "pnpm run export",
-		"lint": "pnpm biome lint --apply src/"
+		"lint": "pnpm biome lint --write src/"
 	},
 	"engines": {
 		"node": "^22.2.0"
